@@ -29,11 +29,24 @@ QVariantList apps() {
 
             AppInfo app;
 
+            bool foundDesktopEntry = false;
+
             while (!in.atEnd()) {
                 QString line = in.readLine();
-                QStringList values = line.split("=");
-                if (values.length() < 2)
+
+                if (line.trimmed().isEmpty())
                     continue;
+
+                if (!foundDesktopEntry) {
+                    if (line.contains("[Desktop Entry]"))
+                        foundDesktopEntry = true;
+                    continue;
+                }
+                else if (line.startsWith('[') && line.endsWith(']')) {
+                    break;
+                }
+
+                QStringList values = line.split("=");
 
                 if (values[0] == "Name") {
                     app.name = values[1];
