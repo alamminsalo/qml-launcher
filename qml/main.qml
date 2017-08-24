@@ -6,10 +6,11 @@ import QtQuick.Controls.Material 2.1
 
 ApplicationWindow {
     visible: true
-    width: Screen.desktopAvailableWidth
-    height: Screen.desktopAvailableHeight
-    title: qsTr("Hello World")
+//    width: Screen.desktopAvailableWidth
+//    height: Screen.desktopAvailableHeight
     visibility: Window.FullScreen
+    flags: Qt.Tool
+
 
     color: "transparent"
     background: Rectangle{
@@ -121,12 +122,16 @@ ApplicationWindow {
             Item {
                 property var page: appPages[index]
 
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: Qt.quit()
+                }
+
                 Grid {
                     spacing: 10
                     anchors.centerIn: parent
                     columns: rootWindow.columns
                     horizontalItemAlignment: Grid.AlignHCenter
-
 
                     populate: Transition {
                         id: trans
