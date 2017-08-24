@@ -13,7 +13,7 @@
 
 struct AppInfo {
     QString name;
-    QString icon;
+    QString icon = "application";
     QString exec;
 };
 
