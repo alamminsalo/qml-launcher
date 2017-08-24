@@ -47,21 +47,23 @@ QVariantList apps() {
                 }
 
                 QStringList values = line.split("=");
+                QString name = values.takeFirst();
+                QString value = QString(values.join('='));
 
-                if (values[0] == "Name") {
-                    app.name = values[1];
+                if (name == "Name") {
+                    app.name = value;
                 }
 
-                if (values[0] == "Icon") {
-                    app.icon = values[1];
+                if (name == "Icon") {
+                    app.icon = value;
                     QIcon icon = QIcon::fromTheme(app.icon);
                     if (icon.isNull()) {
                         qDebug()<< "null icon:" << app.icon;
                     }
                 }
 
-                if (values[0] == "Exec") {
-                    app.exec = values[1];
+                if (name == "Exec") {
+                    app.exec = value.remove("\"").remove(QRegExp(" %."));
                 }
             }
 
