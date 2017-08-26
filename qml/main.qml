@@ -38,6 +38,7 @@ ApplicationWindow {
             }
 
             Keys.onEscapePressed: Qt.quit()
+            Keys.onDownPressed: swipeView.forceActiveFocus()
             onAccepted: {
                 var app = swipeView.currentItem.page[0]
                 if (app) {
@@ -106,12 +107,16 @@ ApplicationWindow {
 
         Keys.onDownPressed: {
             var place = selectedIndex + rootWindow.columns
-            if (place < appPages[currentIndex].length)
+            if (place < currentItem.count())
                 selectedIndex = place
         }
 
-        Keys.onRightPressed: selectedIndex++
-        Keys.onLeftPressed: selectedIndex--
+        Keys.onRightPressed: {
+            selectedIndex = Math.min(selectedIndex + 1, currentItem.count() - 1)
+        }
+        Keys.onLeftPressed: {
+            selectedIndex = Math.max(0, selectedIndex - 1)
+        }
 
         Keys.onReturnPressed: {
             var app = appPages[currentIndex][selectedIndex]
@@ -132,6 +137,10 @@ ApplicationWindow {
 
             Item {
                 id: pageContainer
+                function count() {
+                    return page.length;
+                }
+
                 property var page: appPages[index]
 
                 MouseArea {
