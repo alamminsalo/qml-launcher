@@ -38,6 +38,8 @@ Pane {
             source: "image://icons/" + app[1]
             height: parent.height - label.height
             width: height
+            sourceSize.height: height
+            sourceSize.width: width
             anchors.horizontalCenter: parent.horizontalCenter
         }
 

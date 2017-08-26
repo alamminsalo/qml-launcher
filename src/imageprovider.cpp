@@ -10,7 +10,11 @@ ImageProvider::ImageProvider() :
 QPixmap ImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
 {
     QIcon icon = QIcon::fromTheme(id);
-    QPixmap pixmap = icon.pixmap(128,128);
 
-    return pixmap;
+    qDebug() << requestedSize;
+
+    if (requestedSize.isValid())
+        return icon.pixmap(requestedSize);
+    else
+        return icon.pixmap(128,128);
 }
