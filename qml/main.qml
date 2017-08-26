@@ -23,8 +23,10 @@ ApplicationWindow {
     header: ToolBar {
         height: rootWindow.height * 0.1
         background: Item{}
+
         TextField {
             id: searchField
+            text: ""
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
@@ -32,13 +34,14 @@ ApplicationWindow {
 
             width: rootWindow.width * 0.16
             onTextEdited: {
-                fill(searchField.text)
+                refresh()
             }
+
             Keys.onEscapePressed: Qt.quit()
             onAccepted: {
-                var appQml = swipeView.currentItem.children[0].children[0]
-                if (appQml && appQml.app) {
-                    exec(appQml.app[2])
+                var app = swipeView.currentItem.page[0]
+                if (app) {
+                    exec(app[2])
                 }
             }
         }
@@ -46,12 +49,23 @@ ApplicationWindow {
 
     property var appPages: []
 
-    function fill(str){
+    function filter(app, q) {
+        for (var i in app) {
+            if (app[i].trim().toLowerCase().indexOf(q) > -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function refresh(){
         var page = 0
         var itemsPerPage = 24
-        console.log(itemsPerPage)
+        console.log(searchField.text)
         appPages = [];
         appPages[page] = []
+
+        pageRepeater.model = 0
 
         for (var i in apps) {
             if (appPages[page].length >= itemsPerPage)
@@ -60,15 +74,16 @@ ApplicationWindow {
             if (!appPages[page])
                 appPages[page] = []
 
-            if (!str || apps[i][0].toLowerCase().match(str.toLowerCase()))
-                appPages[page].push(apps[i])
+            var app = apps[i]
+            if (filter(app, searchField.text))
+                appPages[page].push(app)
         }
 
         pageRepeater.model = appPages.length
     }
 
     Component.onCompleted: {
-        fill()
+        refresh()
         searchField.forceActiveFocus()
     }
 
@@ -162,10 +177,10 @@ ApplicationWindow {
                     }
 
                     Repeater {
-                        model: page.length
+                        model: page !== undefined ? page.length : 0
 
                         AppEntry {
-                            app: page[index]
+                            app: page !== undefined ? page[index] : ["undefined", "", ""]
                             height: pageContainer.height * 0.19
                             width: height
                             padding: 10
