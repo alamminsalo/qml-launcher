@@ -45,8 +45,6 @@ ApplicationWindow {
     }
 
     property var appPages: []
-    property int cellWidth: 180
-    property int cellHeight: cellWidth
 
     function fill(str){
         var page = 0
@@ -118,6 +116,7 @@ ApplicationWindow {
             model: appPages.length
 
             Item {
+                id: pageContainer
                 property var page: appPages[index]
 
                 MouseArea {
@@ -167,7 +166,7 @@ ApplicationWindow {
 
                         AppEntry {
                             app: page[index]
-                            height: cellWidth
+                            height: pageContainer.height * 0.22
                             width: height
                             padding: 10
                             selected: swipeView.selectedIndex === index
