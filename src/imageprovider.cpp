@@ -11,8 +11,6 @@ QPixmap ImageProvider::requestPixmap(const QString &id, QSize *size, const QSize
 {
     QIcon icon = QIcon::fromTheme(id);
 
-    qDebug() << requestedSize;
-
     if (requestedSize.isValid())
         return icon.pixmap(requestedSize);
     else
