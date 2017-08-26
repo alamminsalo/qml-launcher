@@ -166,7 +166,7 @@ ApplicationWindow {
 
                         AppEntry {
                             app: page[index]
-                            height: pageContainer.height * 0.22
+                            height: pageContainer.height * 0.20
                             width: height
                             padding: 10
                             selected: swipeView.selectedIndex === index
