@@ -21,7 +21,7 @@ ApplicationWindow {
     property int columns: 6
 
     header: ToolBar {
-        height: 120
+        height: rootWindow.height * 0.1
         background: Item{}
         TextField {
             id: searchField
@@ -30,7 +30,7 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
 
-            width: 300
+            width: rootWindow.width * 0.16
             onTextEdited: {
                 fill(searchField.text)
             }
@@ -125,7 +125,7 @@ ApplicationWindow {
                 }
 
                 Grid {
-                    spacing: 10
+                    spacing: rootWindow.height * 0.01
                     anchors.centerIn: parent
                     columns: rootWindow.columns
                     horizontalItemAlignment: Grid.AlignHCenter
@@ -166,7 +166,7 @@ ApplicationWindow {
 
                         AppEntry {
                             app: page[index]
-                            height: pageContainer.height * 0.20
+                            height: pageContainer.height * 0.19
                             width: height
                             padding: 10
                             selected: swipeView.selectedIndex === index
@@ -191,7 +191,7 @@ ApplicationWindow {
 
     footer: ToolBar {
         background: Item{}
-        height: 50
+        height: rootWindow.height * 0.05
         PageIndicator {
             count: swipeView.count
             currentIndex: swipeView.currentIndex

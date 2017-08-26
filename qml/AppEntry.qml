@@ -10,7 +10,7 @@ Pane {
     property bool selected: false
     background: Rectangle {
         visible: selected
-        radius: 8
+        radius: height * 0.04
         opacity: 0.5
         color: "black"
     }
@@ -50,7 +50,7 @@ Pane {
             fontSizeMode: Text.Fit
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
-            height: 28
+            //height: 28
         }
     }
 }
