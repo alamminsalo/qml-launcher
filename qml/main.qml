@@ -6,11 +6,10 @@ import QtQuick.Controls.Material 2.1
 
 ApplicationWindow {
     visible: true
-//    width: Screen.desktopAvailableWidth
-//    height: Screen.desktopAvailableHeight
+    width: Screen.width
+    height: Screen.height
     visibility: Window.FullScreen
-    flags: Qt.Tool
-
+    flags: Qt.BypassWindowManagerHint | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
     color: "transparent"
     background: Rectangle{
@@ -46,7 +45,6 @@ ApplicationWindow {
     }
 
     property var appPages: []
-
     property int cellWidth: 180
     property int cellHeight: cellWidth
 
