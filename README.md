@@ -16,3 +16,5 @@ And that's it! Now you can run the application via
 ```
 ./qml-launcher
 ```
+
+Now go place it in your PATH and set up some keybinds to launch it!
