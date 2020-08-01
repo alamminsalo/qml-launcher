@@ -18,7 +18,8 @@ struct AppInfo {
     QString exec;
 };
 
-constexpr auto DESKTOP_FILE_DIR = "/usr/share/applications";
+constexpr auto DESKTOP_FILE_SYSTEM_DIR = "/usr/share/applications";
+constexpr auto DESKTOP_FILE_USER_DIR = "%1/.local/share/applications";
 constexpr auto DESKTOP_ENTRY_STRING = "Desktop Entry";
 
 class SettingsGroupRaii {
@@ -36,8 +37,8 @@ private:
     QSettings &m_settings;
 };
 
-QVariantList apps() {
-    QDirIterator it(DESKTOP_FILE_DIR, {"*.desktop"});
+QVariantList createAppsList(const QString &path) {
+    QDirIterator it(path, {"*.desktop"}, QDir::NoFilter, QDirIterator::Subdirectories);
     QVariantList ret;
 
     while (it.hasNext()) {
@@ -57,6 +58,13 @@ QVariantList apps() {
         ret.append(QStringList{app.name, app.icon, app.exec});
     }
 
+    return ret;
+}
+
+QVariantList apps() {
+    QVariantList ret;
+    ret.append(createAppsList(DESKTOP_FILE_SYSTEM_DIR));
+    ret.append(createAppsList(QString(DESKTOP_FILE_USER_DIR).arg(QDir::homePath())));
     return ret;
 }
 
