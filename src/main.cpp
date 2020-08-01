@@ -1,81 +1,66 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+
 #include <QProcess>
-#include <QDebug>
-#include <QDir>
 #include <QFile>
 #include <QVariantMap>
 #include <QIcon>
+#include <QDirIterator>
+#include <QSettings>
 
 #include "imageprovider.h"
 #include "process.h"
 
 struct AppInfo {
     QString name;
-    QString icon = "application";
+    QString icon{"application"};
     QString exec;
 };
 
-QVariantList apps() {
-    QVariantList apps;
+constexpr auto DESKTOP_FILE_DIR = "/usr/share/applications";
+constexpr auto DESKTOP_ENTRY_STRING = "Desktop Entry";
 
-    QDir dir("/usr/share/applications");
-    foreach (auto fn, dir.entryList(QStringList() << "*.desktop", QDir::Files)) {
-       // qDebug() << "Reading" << dir.filePath(fn);
-        QFile file(dir.filePath(fn));
-        if (file.open(QIODevice::ReadOnly)) {
-            QTextStream in(&file);
-
-            AppInfo app;
-
-            bool foundDesktopEntry = false;
-
-            while (!in.atEnd()) {
-                QString line = in.readLine();
-
-                if (line.trimmed().isEmpty())
-                    continue;
-
-                if (!foundDesktopEntry) {
-                    if (line.contains("[Desktop Entry]"))
-                        foundDesktopEntry = true;
-                    continue;
-                }
-                else if (line.startsWith('[') && line.endsWith(']')) {
-                    break;
-                }
-
-                QStringList values = line.split("=");
-                QString name = values.takeFirst();
-                QString value = QString(values.join('='));
-
-                if (name == "Name") {
-                    app.name = value;
-                }
-
-                if (name == "Icon") {
-                    app.icon = value;
-                    QIcon icon = QIcon::fromTheme(app.icon);
-                    if (icon.isNull()) {
-                        qDebug()<< "null icon:" << app.icon;
-                    }
-                }
-
-                if (name == "Exec") {
-                    app.exec = value.remove("\"").remove(QRegExp(" %."));
-                }
-            }
-
-            apps.append(QStringList() << app.name << app.icon << app.exec);
-        }
+class SettingsGroupRaii {
+public:
+    SettingsGroupRaii(QSettings &settings, const QString &groupName)
+            : m_settings(settings) {
+        m_settings.beginGroup(groupName);
     }
 
-    return apps;
+    ~SettingsGroupRaii() {
+        m_settings.endGroup();
+    }
+
+private:
+    QSettings &m_settings;
+};
+
+QVariantList apps() {
+    QDirIterator it(DESKTOP_FILE_DIR, {"*.desktop"});
+    QVariantList ret;
+
+    while (it.hasNext()) {
+        const auto filename = it.next();
+        QSettings desktopFile(filename, QSettings::IniFormat);
+
+        if (!desktopFile.childGroups().contains(DESKTOP_ENTRY_STRING))
+            continue;
+
+        SettingsGroupRaii raii(desktopFile, DESKTOP_ENTRY_STRING);
+
+        AppInfo app;
+        app.exec = desktopFile.value("Exec").toString().remove("\"").remove(QRegExp(" %."));
+        app.icon = desktopFile.value("Icon", "application").toString();
+        app.name = desktopFile.value("Name").toString();
+
+        ret.append(QStringList{app.name, app.icon, app.exec});
+    }
+
+    return ret;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     qputenv("QT_QUICK_CONTROLS_STYLE", "material");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
