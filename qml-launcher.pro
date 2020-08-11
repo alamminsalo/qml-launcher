@@ -1,6 +1,6 @@
 QT += qml quick
 
-CONFIG += c++11
+CONFIG += c++17
 
 SOURCES += src/main.cpp \
     src/imageprovider.cpp \
