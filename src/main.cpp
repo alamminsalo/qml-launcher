@@ -47,9 +47,13 @@ QVariantList createAppsList(const QString &path) {
 
         if (!desktopFile.childGroups().contains(DESKTOP_ENTRY_STRING))
             continue;
-
+        
         SettingsGroupRaii raii(desktopFile, DESKTOP_ENTRY_STRING);
 
+        if (desktopFile.contains("NoDisplay"))
+            if (desktopFile.value("NoDisplay").toBool() == 1)
+                continue;
+        
         AppInfo app;
         app.exec = desktopFile.value("Exec").toString().remove("\"").remove(QRegExp(" %."));
         app.icon = desktopFile.value("Icon", "application").toString();
