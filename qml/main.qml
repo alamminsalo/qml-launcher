@@ -84,6 +84,7 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
+        x= Qt.application.screens[0].virtualX
         refresh()
         searchField.forceActiveFocus()
     }
